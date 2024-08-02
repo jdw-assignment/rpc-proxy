@@ -12,6 +12,8 @@
 - `/rpc` is exposed publically and proxies the rpc requests to the upstream providers.
 - `/health` is an internal endpoint used by ECS to determine the status of the containers.
 
+#
+
 #### RPC Proxy
 
 [<img width=600 src=".github/imgs/request_flow.png?raw=true">](.github/imgs/request_flow.png?raw=true)
@@ -25,6 +27,8 @@ are returned immediately without any decoding.
 
 However, depending on the requirements of the downstream applications, responses could be decoded and verified to ensure
 that the data is valid.
+
+#
 
 ### AWS Architecture
 
@@ -69,6 +73,8 @@ module "us-east-1" {
 
 ```
 
+#
+
 ### CI/CD
 
 #### CI
@@ -80,6 +86,8 @@ when a pull request is created and when commits are made to the main branch.
 
 Similarly, when a release is made on GitHub, a workflow is executed to build the application container image and upload
 it to GHCR.
+
+#
 
 ### Observability (OpenTelemetry)
 
@@ -104,6 +112,8 @@ Furthermore, deploying the service in multiple regions increases not only the pe
 its availability. In the event that one region goes down or experiences a very high load, traffic can be seamlessly
 routed to other regions
 
+#
+
 ### CI/CD
 
 Terraform Cloud can be implemented for centralized state management and deployments to streamline and automate
@@ -113,10 +123,14 @@ management.
 A GitHub workflow can be configured to integrate with Terraform Cloud, automatically triggering it to generate a plan
 for any proposed changes upon a release made.
 
+#
+
 ### Caching
 
 A caching service could be implemented to cache the RPC results. This would decrease the latency of requests as it does
 not need to be proxied to the RPC providers, reducing one external network call.
+
+#
 
 ### Cloudflare
 
@@ -135,6 +149,8 @@ limiting could be utilized instead.
 
 Rate limiting rules could be established to ensure that the API server is not overwhelmed by excessive requests.
 
+#
+
 ### Multiple RPC Providers (Availability)
 
 Currently, only one RPC provider is utilized, which may cause availability issues if the provider goes down. To mitigate
@@ -151,15 +167,21 @@ Features of the rpc gateway service should include:
 4. **Monitoring and Alerts**: Implement monitoring and alerting mechanisms to notify administrators of any issues with
    the RPC providers, allowing for quick response and resolution.
 
+#
+
 ### Autoscaling
 
 More auto-scaling options can be set up, for example, based on the number of requests hitting the ALB.
+
+#
 
 ### Observability
 
 Proper observability must be implemented. Using OTel, requests and errors encountered by the services. This enables
 comprehensive monitoring and analysis of the system’s behavior. By logging detailed information about requests and
 errors, the team can quickly identify and diagnose issues and improved system reliability.
+
+#
 
 ### Metrics & Alarms
 
