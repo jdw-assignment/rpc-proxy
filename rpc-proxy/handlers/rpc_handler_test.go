@@ -81,3 +81,46 @@ func Test_ProxyRPCRequest_AllowedMethods(t *testing.T) {
 		}
 	}
 }
+
+func Test_ProxyRPCRequest_Proxy(t *testing.T) {
+	allowedMethods := []string{
+		"eth_blockNumber",
+		"eth_getBlockByNumber",
+	}
+
+	for _, method := range allowedMethods {
+		t.Run(method, func(t *testing.T) {
+			body := `{"jsonrpc":"2.0","method":"` + method + `","params":[],"id":1}`
+			req, err := http.NewRequest("POST", "/", bytes.NewBufferString(body))
+			if err != nil {
+				t.Fatalf("Could not create request: %v", err)
+			}
+			req.Header.Set("Content-Type", "application/json")
+
+			rec := httptest.NewRecorder()
+			handler := HandleRPCRequest(mockRPCClient)
+			handler.ServeHTTP(rec, req)
+
+			if rec.Code != http.StatusOK {
+				t.Errorf("expected status 200 but got %d for method %s", rec.Code, method)
+			}
+
+			expectedBody := ""
+			switch method {
+			case "eth_blockNumber":
+				expectedBody = `{"jsonrpc":"2.0","result":"0x10d4f","id":1}`
+			case "eth_getBlockByNumber":
+				expectedBody = `{"jsonrpc":"2.0","result":{"number":"0x1b4"},"id":1}`
+			}
+
+			respBody, err := io.ReadAll(rec.Body)
+			if err != nil {
+				t.Fatalf("Could not read response body: %v", err)
+			}
+
+			if strings.TrimSpace(string(respBody)) != expectedBody {
+				t.Errorf("expected body %s but got %s for method %s", expectedBody, string(respBody), method)
+			}
+		})
+	}
+}
