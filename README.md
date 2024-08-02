@@ -1,0 +1,149 @@
+## Write Up
+
+### Application
+
+#### Endpoints
+
+| HTTP Method | URL     | Public |
+|-------------|---------|--------|
+| POST        | /rpc    | True   |
+| GET         | /health | False  |
+
+- `/rpc` is exposed publically and proxies the rpc requests to the upstream providers.
+- `/health` is an internal endpoint used by ALB to determine the status of the containers.
+
+#### RPC Proxy
+
+[<img width=600 src=".github/imgs/request_flow.png?raw=true">](.github/imgs/request_flow.png?raw=true)
+
+As shown in the diagram above, incoming RPC requests are decoded by the proxy app. This decoding is required to allow
+the app to verify whether the requested RPC method is in the allowed list. If the method is blocked, an error response
+is sent, indicating that the RPC method is not allowed.
+
+For allowed methods, the request is proxied to the RPC provider. To ensure minimal latency, responses from the provider
+are returned immediately without any decoding.
+
+However, depending on the requirements of the downstream applications, responses could be decoded and verified to ensure
+that the data is valid.
+
+### AWS Architecture
+
+[<img width=500 src=".github/imgs/aws.png?raw=true">](.github/imgs/aws.png?raw=true)
+
+For this homework exercise, `ap-southeast-1` and it's three available
+zone (`ap-southeast-1a`, `ap-southeast-1b`, `ap-southeast-1c`) are used.
+
+As per the requirements, ECS with fargate is being used to deploy the proxy application. An ALB is implemented to route
+traffic between the different AZs.
+
+Logs from the applications are also piped to CloudWatch. It may be a bit overzealous for this application, but logs of
+requests handled by the ALB are stored in an S3 bucket.
+
+### Terraform
+
+As for IaC, Terraform is used as per requirement. For this assignment, Terraform AWS modules by
+`terraform-aws-modules` are utilized mainly because they abstract the creation and configuration of resources.
+
+Custom modules were created for AWS region. In the event that multi-region deployment is needed, these modules can be
+used to quickly replicate the infrastructure in a new region.
+
+```terraform
+module "ap_southeast_1" {
+  source = "./aws/region"
+
+  providers = {
+    aws = aws.ap-southeast-1
+  }
+}
+
+// New Region
+module "us-east-1" {
+  source = "./aws/region"
+
+  providers = {
+    aws = aws.us-east-1
+  }
+}
+
+```
+
+### CI/CD
+
+#### CI
+
+A GitHub workflow for unit testing is implemented to verify the success of the proxy application’s build and unit tests
+when a pull request is created and when commits are made to the main branch.
+
+#### CD
+
+Similarly, when a release is made on GitHub, a workflow is executed to build the application container image and upload
+it to GHCR.
+
+### Observability (OpenTelemetry)
+
+For this exercise and due to time constraints, a basic OpenTelemetry implementation is added to the web application to
+log and trace incoming requests, as well as to capture any errors encountered while proxying the RPC requests. The
+output is captured in CloudWatch, providing centralized and accessible monitoring and logging capabilities.
+
+## Improvement for production
+
+The following are the changes which I think will be needed for a production system.
+
+### Multi Region
+
+Assuming that this service is designed to cater to users globally, this architecture could be replicated in different
+regions. However, some changes would be needed to accommodate global usage. Specifically, the implementation of AWS
+Global Accelerator would be necessary to route traffic to the appropriate regional ALB endpoint.
+
+### Caching
+
+A caching service could be implemented to cache the RPC results. This would decrease the latency of requests as it does
+not need to be proxied to the RPC providers, reducing one external network call.
+
+### Cloudflare
+
+Cloudflare could also be implemented for its WAF and CDN capabilities. While AWS offers similar services with AWS WAF
+and Shield, my experience suggests that AWS Shield is quite limited in its customizability. For instance, Cloudflare
+allows for rate limiting with periods as short as 10 seconds, whereas AWS WAF has a minimum period of 60 seconds, which
+may not be feasible for production environments.
+
+#### WAF
+
+As this is a public API, bots may misuse it. Implementing Cloudflare’s Super Bot feature could help reduce the number of
+bot requests. However, this may not be feasible if the API service is intended for use by bots. In that scenario, rate
+limiting could be utilized instead.
+
+#### Rate-limiting
+
+Rate limiting rules could be established to ensure that the API server is not overwhelmed by excessive requests.
+
+### Multiple RPC Providers (Availability)
+
+Currently, only one RPC provider is utilized, which may cause availability issues if the provider goes down. To mitigate
+this, another application should be implemented to serve as a gateway to multiple RPC providers.
+
+Features of the rpc gateway application should include:
+
+1. **Provider List Management**: Maintain a list of multiple RPC providers, ensuring that there are always
+   alternative providers available in case one goes down.
+2. **Health Checks**: Regularly probe each RPC provider’s endpoint to check for latency and availability. This helps in
+   identifying the best provider to route requests to, based on current performance and uptime.
+3. **Failover Mechanism**: Automatically switch to an alternative provider if the current one becomes unavailable or
+   experiences high latency. This ensures continuous service availability and minimizes downtime.
+4. **Monitoring and Alerts**: Implement monitoring and alerting mechanisms to notify administrators of any issues with
+   the RPC providers, allowing for quick response and resolution.
+
+### Observability
+
+Proper observability must be implemented. Using OTel, requests and errors encountered by the services. This enables
+comprehensive monitoring and analysis of the system’s behavior. By logging detailed information about requests and
+errors, the team can quickly identify and diagnose issues and improved system reliability.
+
+### Metrics & Alarms
+
+CloudWatch alarms or an external monitoring service should be implemented to notify the team if any services are down or
+experiencing high latency, etc. This allows the team to manually intervene when necessary.
+
+With appropriate metrics logged, you can gain insights into the behavior and performance of the applications, allowing
+for further optimization of the service. For example, if metrics determine that `eth_blockNumber` has very high usage, a
+caching service could be implemented to always cache the latest result.

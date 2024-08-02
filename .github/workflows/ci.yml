@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [ main ]
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go-version: [ '1.22' ]
+
+    steps:
+      - uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4.1.6
+      - name: Setup Go
+        uses: actions/setup-go@0a12ed9d6a96ab950c8f026ed9f722fe0da7ef32 # v5.0.2
+        with:
+          go-version: ${{ matrix.go-version }}
+      - name: Install dependencies
+        working-directory: ./rpc-proxy
+        run: go install .
+      - name: Run Test
+        working-directory: ./rpc-proxy
+        run: go test -v ./... -json > TestResults-${{ matrix.go-version }}.json
+      - name: Upload test results
+        uses: actions/upload-artifact@0b2256b8c012f0828dc542b3febcab082c67f72b # v4.3.4
+        with:
+          name: Go-results-${{ matrix.go-version }}
+          path: ./rpc-proxy/TestResults-${{ matrix.go-version }}.json
