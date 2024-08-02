@@ -31,6 +31,7 @@ However, this approach assumes the provider’s response is trustworthy, which m
 #
 
 ### Terraform / AWS Architecture
+_Tested and successfully deployed_
 
 [<img width=500 src=".github/imgs/aws.png?raw=true">](.github/imgs/aws.png?raw=true)
 
