@@ -16,15 +16,11 @@
 
 [<img width=600 src=".github/imgs/request_flow.png?raw=true">](.github/imgs/request_flow.png?raw=true)
 
-As shown in the diagram above, incoming RPC requests are decoded by the proxy app. This decoding is required to allow
-the app to verify whether the requested RPC method is in the allowed list. If the method is blocked, an error response
-is sent, indicating that the RPC method is not allowed.
+As shown in the diagram above, incoming RPC requests are decoded by the proxy app. This decoding is required to allow the app to verify whether the requested RPC method is in the allowed list. If the method is blocked, an error response is sent, indicating that the RPC method is not allowed.
 
-For allowed methods, the request is proxied to the RPC provider. To ensure minimal latency, responses from the provider
-are returned immediately without any decoding.
+For allowed methods, the request is proxied to the RPC provider. To ensure minimal latency, responses from the provider are returned without any decoding.
 
-However, depending on the requirements of the downstream applications, responses could be decoded and verified to ensure
-that the data is valid.
+However, this approach assumes the provider’s response is trustworthy, which might not always be feasible. Depending on the use case, decoding responses to verify data validity could be necessary.
 
 #### Unit Testing
 
