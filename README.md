@@ -28,9 +28,9 @@ that the data is valid.
 
 #### Unit Testing
 
-`Test_ProxyRPCRequest_BlockedMethods`: This test checks that all RPC methods, other than `eth_blockNumber` and `eth_getBlockByNumber`, return an error.
-`Test_ProxyRPCRequest_AllowedMethods`: This test checks that both `eth_blockNumber` and `eth_getBlockByNumber` are allowed.
-`Test_ProxyRPCRequest_Proxy`: This test checks that proxying with a mock endpoint returns a valid response.
+- `Test_ProxyRPCRequest_BlockedMethods`: This test checks that all RPC methods, other than `eth_blockNumber` and `eth_getBlockByNumber`, return an error.
+- `Test_ProxyRPCRequest_AllowedMethods`: This test checks that both `eth_blockNumber` and `eth_getBlockByNumber` are allowed.
+- `Test_ProxyRPCRequest_Proxy`: This test checks that proxying with a mock endpoint returns a valid response.
 
 #
 
