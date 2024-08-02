@@ -10,7 +10,9 @@
 | GET         | /health | False  |
 
 - `/rpc` is exposed publically and proxies the rpc requests to the upstream providers.
-- `/health` is an internal endpoint used by ALB to determine the status of the containers.
+- `/health` is an internal endpoint used by ECS to determine the status of the containers.
+
+#
 
 #### RPC Proxy
 
@@ -25,6 +27,8 @@ are returned immediately without any decoding.
 
 However, depending on the requirements of the downstream applications, responses could be decoded and verified to ensure
 that the data is valid.
+
+#
 
 ### AWS Architecture
 
@@ -69,6 +73,8 @@ module "us-east-1" {
 
 ```
 
+#
+
 ### CI/CD
 
 #### CI
@@ -80,6 +86,8 @@ when a pull request is created and when commits are made to the main branch.
 
 Similarly, when a release is made on GitHub, a workflow is executed to build the application container image and upload
 it to GHCR.
+
+#
 
 ### Observability (OpenTelemetry)
 
@@ -104,6 +112,8 @@ Furthermore, deploying the service in multiple regions increases not only the pe
 its availability. In the event that one region goes down or experiences a very high load, traffic can be seamlessly
 routed to other regions
 
+#
+
 ### CI/CD
 
 Terraform Cloud can be implemented for centralized state management and deployments to streamline and automate
@@ -113,15 +123,19 @@ management.
 A GitHub workflow can be configured to integrate with Terraform Cloud, automatically triggering it to generate a plan
 for any proposed changes upon a release made.
 
+#
+
 ### Caching
 
 A caching service could be implemented to cache the RPC results. This would decrease the latency of requests as it does
 not need to be proxied to the RPC providers, reducing one external network call.
 
+#
+
 ### Cloudflare
 
 Cloudflare could also be implemented for its WAF and CDN capabilities. While AWS offers similar services with AWS WAF
-and Shield, my experience suggests that AWS Shield is quite limited in its customizability. For instance, Cloudflare
+and Shield, my experience suggests that AWS Shield/WAF is quite limited in its customizability. For instance, Cloudflare
 allows for rate limiting with periods as short as 10 seconds, whereas AWS WAF has a minimum period of 60 seconds, which
 may not be feasible for production environments.
 
@@ -135,12 +149,14 @@ limiting could be utilized instead.
 
 Rate limiting rules could be established to ensure that the API server is not overwhelmed by excessive requests.
 
+#
+
 ### Multiple RPC Providers (Availability)
 
 Currently, only one RPC provider is utilized, which may cause availability issues if the provider goes down. To mitigate
-this, another application should be implemented to serve as a gateway to multiple RPC providers.
+this, another service should be implemented to serve as a gateway to multiple RPC providers.
 
-Features of the rpc gateway application should include:
+Features of the rpc gateway service should include:
 
 1. **Provider List Management**: Maintain a list of multiple RPC providers, ensuring that there are always
    alternative providers available in case one goes down.
@@ -151,15 +167,15 @@ Features of the rpc gateway application should include:
 4. **Monitoring and Alerts**: Implement monitoring and alerting mechanisms to notify administrators of any issues with
    the RPC providers, allowing for quick response and resolution.
 
-### Autoscaling
-
-More auto-scaling options can be set up, for example, based on the number of requests hitting the ALB.
+#
 
 ### Observability
 
 Proper observability must be implemented. Using OTel, requests and errors encountered by the services. This enables
 comprehensive monitoring and analysis of the system’s behavior. By logging detailed information about requests and
 errors, the team can quickly identify and diagnose issues and improved system reliability.
+
+#
 
 ### Metrics & Alarms
 
@@ -169,3 +185,19 @@ experiencing high latency, etc. This allows the team to manually intervene when 
 With appropriate metrics logged, you can gain insights into the behavior and performance of the applications, allowing
 for further optimization of the service. For example, if metrics determine that `eth_blockNumber` has very high usage, a
 caching service could be implemented to always cache the latest result.
+
+#
+
+### Domain and HTTPS
+
+Before moving to production, it is essential to set up a domain and obtain HTTPS certification. Using the ALB endpoint directly is impractical. An HTTPS certificate ensures that all data transmitted between users and the server is encrypted, which is critical for maintaining the security of sensitive information.
+
+Furthermore, using a recognizable domain associated with a known brand, combined with an HTTPS certificate, significantly enhances user trust in the service.
+
+#
+
+### Autoscaling
+
+More auto-scaling options can be set up based on different criteria, for example, the number of requests hitting the ALB. This ensures that the auto-scaling strategies cater to different conditions and provide optimal performance and cost management.​⬤
+
+#
