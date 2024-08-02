@@ -135,7 +135,7 @@ not need to be proxied to the RPC providers, reducing one external network call.
 ### Cloudflare
 
 Cloudflare could also be implemented for its WAF and CDN capabilities. While AWS offers similar services with AWS WAF
-and Shield, my experience suggests that AWS Shield is quite limited in its customizability. For instance, Cloudflare
+and Shield, my experience suggests that AWS Shield/WAF is quite limited in its customizability. For instance, Cloudflare
 allows for rate limiting with periods as short as 10 seconds, whereas AWS WAF has a minimum period of 60 seconds, which
 may not be feasible for production environments.
 
