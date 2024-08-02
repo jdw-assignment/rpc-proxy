@@ -77,14 +77,10 @@ module "us-east-1" {
 
 ### CI/CD
 
-#### CI
-
 A GitHub workflow for unit testing is implemented to verify the success of the proxy application’s build and unit tests
 when a pull request is created and when commits are made to the main branch.
 
-#### CD
-
-Similarly, when a release is made on GitHub, a workflow is executed to build the application container image and upload
+Similarly, when a release is made on GitHub, another workflow is executed to build the application container image and upload
 it to GHCR.
 
 #
