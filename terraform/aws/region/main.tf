@@ -24,7 +24,7 @@ module "rpc-proxy-svc" {
   task_role_arn         = aws_iam_role.task_role.arn
 
   svc_name = "rpc-proxy-svc"
-  tag  = "0.0.5"
+  tag  = "0.0.1"
 
   rpc_url = "https://polygon-rpc.com"
 }

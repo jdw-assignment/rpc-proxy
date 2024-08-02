@@ -114,7 +114,7 @@ resource "aws_ecs_task_definition" "main" {
   container_definitions = jsonencode([
     {
       name   = "rpc-proxy-app"
-      image  = "ghcr.io/joeldavidw/rpc-proxy-app:${var.tag}"
+      image  = "ghcr.io/jdw-assignment/rpc-proxy-app:${var.tag}"
       cpu    = 256
       memory = 512
       portMappings = [
