@@ -44,6 +44,8 @@ requests handled by the ALB are stored in an S3 bucket.
 As for IaC, Terraform is used as per requirement. For this assignment, Terraform AWS modules by
 `terraform-aws-modules` are utilized mainly because they abstract the creation and configuration of resources.
 
+Autoscaling has also implemented to auto scale based on the CPU load.
+
 Custom modules were created for AWS region. In the event that multi-region deployment is needed, these modules can be
 used to quickly replicate the infrastructure in a new region.
 
@@ -95,7 +97,7 @@ The following are the changes which I think will be needed for a production syst
 
 Assuming that this service is designed to cater to users globally, this architecture could be replicated in different
 regions. However, some changes would be needed to accommodate global usage. Specifically, the implementation of AWS
-Global Accelerator would be necessary to route traffic to the appropriate regional ALB endpoint which is closest to the
+Global Accelerator could be used to optimally route traffic to the appropriate regional ALB endpoint which is closest to the
 origin of the requests.
 
 Furthermore, deploying the service in multiple regions increases not only the performance of the proxy service but also
@@ -148,6 +150,10 @@ Features of the rpc gateway application should include:
    experiences high latency. This ensures continuous service availability and minimizes downtime.
 4. **Monitoring and Alerts**: Implement monitoring and alerting mechanisms to notify administrators of any issues with
    the RPC providers, allowing for quick response and resolution.
+
+### Autoscaling
+
+More auto-scaling options can be set up, for example, based on the number of requests hitting the ALB.
 
 ### Observability
 
