@@ -169,12 +169,6 @@ Features of the rpc gateway service should include:
 
 #
 
-### Autoscaling
-
-More auto-scaling options can be set up, for example, based on the number of requests hitting the ALB.
-
-#
-
 ### Observability
 
 Proper observability must be implemented. Using OTel, requests and errors encountered by the services. This enables
@@ -191,3 +185,19 @@ experiencing high latency, etc. This allows the team to manually intervene when 
 With appropriate metrics logged, you can gain insights into the behavior and performance of the applications, allowing
 for further optimization of the service. For example, if metrics determine that `eth_blockNumber` has very high usage, a
 caching service could be implemented to always cache the latest result.
+
+#
+
+### Domain and HTTPS
+
+Before moving to production, it is essential to set up a domain and obtain HTTPS certification. Using the ALB endpoint directly is impractical. An HTTPS certificate ensures that all data transmitted between users and the server is encrypted, which is critical for maintaining the security of sensitive information.
+
+Furthermore, using a recognizable domain associated with a known brand, combined with an HTTPS certificate, significantly enhances user trust in the service.
+
+#
+
+### Autoscaling
+
+More auto-scaling options can be set up based on different criteria, for example, the number of requests hitting the ALB. This ensures that the auto-scaling strategies cater to different conditions and provide optimal performance and cost management.​⬤
+
+#
