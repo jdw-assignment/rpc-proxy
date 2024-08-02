@@ -12,8 +12,6 @@
 - `/rpc` is exposed publically and proxies the rpc requests to the upstream providers.
 - `/health` is an internal endpoint used by ECS to determine the status of the containers.
 
-#
-
 #### RPC Proxy
 
 [<img width=600 src=".github/imgs/request_flow.png?raw=true">](.github/imgs/request_flow.png?raw=true)
@@ -28,9 +26,15 @@ are returned immediately without any decoding.
 However, depending on the requirements of the downstream applications, responses could be decoded and verified to ensure
 that the data is valid.
 
+#### Unit Testing
+
+`Test_ProxyRPCRequest_BlockedMethods`: This test checks that all RPC methods, other than `eth_blockNumber` and `eth_getBlockByNumber`, return an error.
+`Test_ProxyRPCRequest_AllowedMethods`: This test checks that both `eth_blockNumber` and `eth_getBlockByNumber` are allowed.
+`Test_ProxyRPCRequest_Proxy`: This test checks that proxying with a mock endpoint returns a valid response.
+
 #
 
-### AWS Architecture
+### Terraform / AWS Architecture
 
 [<img width=500 src=".github/imgs/aws.png?raw=true">](.github/imgs/aws.png?raw=true)
 
