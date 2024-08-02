@@ -197,6 +197,16 @@ Furthermore, using a recognizable domain associated with a known brand, combined
 
 ### Autoscaling
 
-More auto-scaling options can be set up based on different criteria, for example, the number of requests hitting the ALB. This ensures that the auto-scaling strategies cater to different conditions and provide optimal performance and cost management.​⬤
+More auto-scaling options can be set up based on different criteria, for example, the number of requests hitting the ALB. This ensures that the auto-scaling strategies cater to different conditions and provide optimal performance and cost management.​
 
 #
+
+### Determine SLIs/SLOs
+
+Before going to production, it’s essential to determine the SLIs for the service’s performance. For example, using tools like Artillery to simulate traffic can help measure response time, error rate, and system throughput. This data is crucial for setting accurate SLOs, ensuring the service meets performance and reliability standards.
+
+Furthermore, with the baseline of the application determined, the team can better establish the right thresholds for alerts and optimize autoscaling and the number of task instances needed.
+
+
+
+
