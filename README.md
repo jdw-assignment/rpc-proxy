@@ -85,6 +85,8 @@ For this exercise and due to time constraints, a basic OpenTelemetry implementat
 log and trace incoming requests, as well as to capture any errors encountered while proxying the RPC requests. The
 output is captured in CloudWatch, providing centralized and accessible monitoring and logging capabilities.
 
+---
+
 ## Improvement for production
 
 The following are the changes which I think will be needed for a production system.
@@ -94,6 +96,15 @@ The following are the changes which I think will be needed for a production syst
 Assuming that this service is designed to cater to users globally, this architecture could be replicated in different
 regions. However, some changes would be needed to accommodate global usage. Specifically, the implementation of AWS
 Global Accelerator would be necessary to route traffic to the appropriate regional ALB endpoint.
+
+### CI/CD
+
+Terraform Cloud can be implemented for centralized state management and deployments to streamline and automate
+infrastructure
+management.
+
+A GitHub workflow can be configured to integrate with Terraform Cloud, automatically triggering it to generate a plan
+for any proposed changes upon a release made.
 
 ### Caching
 
