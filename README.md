@@ -99,6 +99,8 @@ The following are the changes which I think will be needed for a production syst
 
 ### Multi Region
 
+[<img width=500 src=".github/imgs/multiregion.png?raw=true">](.github/imgs/multiregion.png?raw=true)
+
 Assuming that this service is designed to cater to users globally, this architecture could be replicated in different
 regions. However, some changes would be needed to accommodate global usage. Specifically, the implementation of AWS
 Global Accelerator could be used to optimally route traffic to the appropriate regional ALB endpoint which is closest to the
