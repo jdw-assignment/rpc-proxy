@@ -10,7 +10,7 @@
 | GET         | /health | False  |
 
 - `/rpc` is exposed publically and proxies the rpc requests to the upstream providers.
-- `/health` is an internal endpoint used by ALB to determine the status of the containers.
+- `/health` is an internal endpoint used by ECS to determine the status of the containers.
 
 #### RPC Proxy
 
@@ -138,9 +138,9 @@ Rate limiting rules could be established to ensure that the API server is not ov
 ### Multiple RPC Providers (Availability)
 
 Currently, only one RPC provider is utilized, which may cause availability issues if the provider goes down. To mitigate
-this, another application should be implemented to serve as a gateway to multiple RPC providers.
+this, another service should be implemented to serve as a gateway to multiple RPC providers.
 
-Features of the rpc gateway application should include:
+Features of the rpc gateway service should include:
 
 1. **Provider List Management**: Maintain a list of multiple RPC providers, ensuring that there are always
    alternative providers available in case one goes down.
