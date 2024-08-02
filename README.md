@@ -95,7 +95,12 @@ The following are the changes which I think will be needed for a production syst
 
 Assuming that this service is designed to cater to users globally, this architecture could be replicated in different
 regions. However, some changes would be needed to accommodate global usage. Specifically, the implementation of AWS
-Global Accelerator would be necessary to route traffic to the appropriate regional ALB endpoint.
+Global Accelerator would be necessary to route traffic to the appropriate regional ALB endpoint which is closest to the
+origin of the requests.
+
+Furthermore, deploying the service in multiple regions increases not only the performance of the proxy service but also
+its availability. In the event that one region goes down or experiences a very high load, traffic can be seamlessly
+routed to other regions
 
 ### CI/CD
 
